@@ -1,7 +1,5 @@
 package com.MateuszSuplewski.Zoo.config;
 
-
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,17 +24,19 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("")
+                .requestMatchers("/api/v1/auth/**","/", "/login**","/callback/", "/webjars/**", "/error**", "/home")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                //new Session for each request !
                 .and()
                 .authenticationProvider(authenticationProdiver)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
+//                .formLogin()
+//                .defaultSuccessUrl("/home", true);
 
         return http.build();
     }
