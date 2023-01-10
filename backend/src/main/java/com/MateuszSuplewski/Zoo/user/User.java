@@ -3,7 +3,7 @@ package com.MateuszSuplewski.Zoo.user;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Data; // tworzy getery i settery dla wszystkiego automatycznie ! + toString
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
