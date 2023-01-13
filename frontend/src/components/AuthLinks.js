@@ -4,20 +4,20 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 const AuthLinks = () => {
-  const authState = useSelector((state) => state.auth)
-  const { value } = authState
-  const [anchorElUser, setAnchorElUser] = React.useState(null)
+  const authState = useSelector((state) => state.auth);
+  const {value} = authState;
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleCloseUserMenu = () => {
-    setAnchorElUser(null)
-  }
+    setAnchorElUser(null);
+  };
 
   return (
     <>
       {value ? (
         <MenuItem onClick={handleCloseUserMenu}>
           <Typography
-            sx={{ color: 'inherit', textDecoration: 'none' }}
+            sx={{color: 'inherit', textDecoration: 'none'}}
             component={Link}
             to={'/logout'}
             textAlign="center"
@@ -29,7 +29,7 @@ const AuthLinks = () => {
         <>
           <MenuItem onClick={handleCloseUserMenu}>
             <Typography
-              sx={{ color: 'inherit', textDecoration: 'none' }}
+              sx={{color: 'inherit', textDecoration: 'none'}}
               component={Link}
               to={'/register'}
               textAlign="center"
@@ -39,7 +39,7 @@ const AuthLinks = () => {
           </MenuItem>
           <MenuItem onClick={handleCloseUserMenu}>
             <Typography
-              sx={{ color: 'inherit', textDecoration: 'none' }}
+              sx={{color: 'inherit', textDecoration: 'none'}}
               component={Link}
               to={'/login'}
               textAlign="center"
@@ -50,6 +50,6 @@ const AuthLinks = () => {
         </>
       )}
     </>
-  )
-}
+  );
+};
 export default AuthLinks
