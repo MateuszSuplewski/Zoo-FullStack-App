@@ -1,28 +1,32 @@
-import React, { useState } from 'react'
-import { Button, TextField, Box, Avatar, Typography, Link, Container, Grid } from '@mui/material'
+import React, { useState, useEffect } from 'react'
+import { Button, TextField, Box, Avatar, Typography, Link, Container, Grid, Alert } from '@mui/material'
 import LockPersonIcon from '@mui/icons-material/LockPerson'
-import axios from 'axios'
+import { actionCreators } from '../state/validateUser'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
-function Login() {
+const Login = () => {
+  const storeDispatch = useDispatch()
+  const navigate = useNavigate()
+  const authState = useSelector((state) => state.auth)
+  const { value, error } = authState
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+  useEffect(() => {
+    if (value && value.token) setTimeout(() => navigate(-1), 5000)
+  }, [value])
+
+  const clearFields = () => {
+    setEmail('')
+    setPassword('')
+  }
+
   const validateUser = async (e) => {
     e.preventDefault()
-
-    try {
-      const response = await axios.post(
-        'http://localhost:8080/api/v1/auth/authenticate',
-        {
-          email,
-          password,
-        }
-      )
-
-      console.log(response.data)
-    } catch (error) {
-      console.log(error.message)
-    }
+    storeDispatch(actionCreators.validateUser({ email, password }, '/authenticate'))
+    clearFields()
   }
 
   return (
@@ -41,6 +45,16 @@ function Login() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
+        {value && value.token && (
+          <Alert sx={{ mt: 1, width: '100%' }} severity="success">
+            Logged successfully, You will be redirected in 5s
+          </Alert>
+        )}
+        {error && (
+          <Alert sx={{ mt: 1, width: '100%' }} severity="error">
+            Invalid email or password
+          </Alert>
+        )}
         <Box component="form" onSubmit={validateUser} noValidate sx={{ mt: 1 }}>
           <TextField
             margin="normal"
@@ -70,11 +84,11 @@ function Login() {
             Sign In
           </Button>
           <Grid container justifyContent="flex-end">
-              <Grid item>
-          <Link href="/register" variant="body2">
-            {"Don't have an account? Sign Up"}
-          </Link>
-          </Grid>
+            <Grid item>
+              <Link href="/register" variant="body2">
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Grid>
           </Grid>
         </Box>
       </Box>
