@@ -1,6 +1,9 @@
 package com.MateuszSuplewski.Zoo.animal;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,5 +24,6 @@ public class Species {
     private Integer id;
     private String name;
     @OneToMany(mappedBy = "species", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<Animal> animal;
 }

@@ -1,11 +1,10 @@
 package com.MateuszSuplewski.Zoo.animal;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Data
@@ -25,5 +24,6 @@ public class Animal {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "species_id", referencedColumnName = "id")
+    @JsonManagedReference
     private Species species;
 }
