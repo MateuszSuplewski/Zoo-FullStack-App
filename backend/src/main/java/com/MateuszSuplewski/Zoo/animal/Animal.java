@@ -2,7 +2,9 @@ package com.MateuszSuplewski.Zoo.animal;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,6 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Table(name = "animal")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +27,5 @@ public class Animal {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "species_id", referencedColumnName = "id")
-    @JsonManagedReference
     private Species species;
 }
