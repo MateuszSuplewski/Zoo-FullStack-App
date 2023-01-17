@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Button, TextField, Box, Avatar, Typography, Link, Container, Grid, Alert } from '@mui/material'
 import LockPersonIcon from '@mui/icons-material/LockPerson'
-import { actionCreators } from '../state/validateUser'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { createActionLogin } from '../state/auth'
 
 const Login = () => {
   const storeDispatch = useDispatch()
@@ -25,7 +25,7 @@ const Login = () => {
 
   const validateUser = async (e) => {
     e.preventDefault()
-    storeDispatch(actionCreators.validateUser({ email, password }, '/authenticate'))
+    storeDispatch(createActionLogin({email,password}))
     clearFields()
   }
 

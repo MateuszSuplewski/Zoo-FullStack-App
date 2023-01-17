@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react'
 import { Box, Typography, Container } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import { actionCreators } from '../state/validateUser'
 import { useDispatch } from 'react-redux'
+import { createActionLogout } from '../state/auth'
 
 const Logout = () => {
   const navigate = useNavigate()
   const storeDispatch = useDispatch()
 
   useEffect(() => {
-    storeDispatch(actionCreators.set(null))
+    storeDispatch(createActionLogout())
     setTimeout(() => navigate(-1), 5000)
   })
 

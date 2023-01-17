@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Button, TextField, Box, Avatar, Typography, Link, Container, Grid, Alert } from '@mui/material'
 import LockPersonIcon from '@mui/icons-material/LockPerson'
-import { actionCreators } from '../state/validateUser'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { createActionRegister } from '../state/auth'
 
 const Register = () => {
   const storeDispatch = useDispatch()
@@ -30,12 +30,8 @@ const Register = () => {
   const saveUser = async (e) => {
     e.preventDefault()
 
-    storeDispatch(
-      actionCreators.validateUser(
-        { firstname: firstName, lastname: lastName, email, password },
-        '/register'
-      )
-    ) // ten sam email przechodzi ... cos z tym zrobic!
+    storeDispatch(createActionRegister({ firstname: firstName, lastname: lastName, email, password })) 
+    // ten sam email przechodzi ... cos z tym zrobic!
     clearFields()
   }
 
