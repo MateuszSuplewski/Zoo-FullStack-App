@@ -7,6 +7,7 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag'
 import AuthLinks from './AuthLinks'
 
 const pages = ['Home', 'Animals']
+const urls = ['/', '/animals/page/1']
 const userLinks = ['Orders']
 
 const Navbar = () => {
@@ -78,12 +79,12 @@ const Navbar = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
+              {pages.map((page, index) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography
                     sx={{ color: 'inherit', textDecoration: 'none' }}
                     component={Link}
-                    to={page === 'Home' ? '/' : `/${page.toLowerCase()}`}
+                    to={urls[index].toLowerCase()}
                     textAlign="center"
                   >
                     {page}
@@ -112,11 +113,11 @@ const Navbar = () => {
             LamaZoo
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+            {pages.map((page,index) => (
               <Button
                 key={page}
                 component={Link}
-                to={page === 'Home' ? '/' : `/${page.toLowerCase()}`}
+                to={urls[index].toLowerCase()}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 {page}
