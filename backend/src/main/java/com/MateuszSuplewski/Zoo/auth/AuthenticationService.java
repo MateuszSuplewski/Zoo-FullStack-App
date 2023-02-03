@@ -32,7 +32,7 @@ public class AuthenticationService {
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
 
-        return AuthenticationResponse.builder().token(jwtToken).email(request.getEmail()).build();
+        return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -47,6 +47,32 @@ public class AuthenticationService {
 
         var jwtToken = jwtService.generateToken(user);
 
-        return AuthenticationResponse.builder().token(jwtToken).email(request.getEmail()).build();
+        return AuthenticationResponse.builder().token(jwtToken).build();
     }
+
+   public User findUserFromToken(String token){
+       String userEmail = jwtService.extractUsername(token);
+       var user = repository.findByEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("Can't'find user connected with the token"));
+        return user;
+    }
+
+   public Integer findUserIdFromToken(String token){
+       var user = findUserFromToken(token);
+       var userId = user.getId();
+       return userId;
+    }
+
+//    public Integer findUserFirstNameFromToken(String token){
+//        var user = findUserFromToken(token);
+//        var userId = user.getId();
+//        return userId;
+//    }
+
+    public Role findUserRoleFromToken(String token){
+        var user = findUserFromToken(token);
+        var userRole = user.getRole();
+        return userRole;
+    }
+
+
 }
