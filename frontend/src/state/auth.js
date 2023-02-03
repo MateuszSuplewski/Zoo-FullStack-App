@@ -1,57 +1,72 @@
-import axios from 'axios'
+import AuthAPI from "../api/authProvider"
+
+const api = new AuthAPI('http://localhost:8080/api/v1/auth')
+
 
 export const REGISTER = 'auth/REGISTER'
 export const LOGIN = 'auth/LOGIN'
-export const ERROR = 'auth/ERROR'
-export const LOADING = 'auth/LOADING'
 export const LOGOUT = 'auth/LOGOUT'
+export const ERROR = 'auth/ERROR'
+export const START = 'auth/START'
+export const STOP = 'auth/STOP'
 
-export const createActionLogin =
-  (accountDetails) => async (dispatch, getState) => {
-    try {
-      const response = await axios.post(
-        'http://localhost:8080/api/v1/auth/authenticate',
-        accountDetails
-      )
-      dispatch({
-        type: LOGIN,
-        payload: response.data,
-      })
-    } catch (error) {
-      dispatch({
-        type: ERROR,
-        payload: error.message,
-      })
-    }
-  }
 
-export const createActionRegister =
-  (accountDetails) => async (dispatch, getState) => {
-    try {
-      const response = await axios.post(
-        'http://localhost:8080/api/v1/auth/register',
-        accountDetails
-      )
+export const createActionRegister = (accountDetails) => async (dispatch, getState) => {
+  dispatch(createActionStart())
+  api
+    .register(accountDetails, 'register')
+    .then((resp) => {
       dispatch({
         type: REGISTER,
-        payload: response.data,
+        payload: resp.data,
       })
-    } catch (error) {
+    })
+    .catch((err) => {
       dispatch({
         type: ERROR,
-        payload: error.message,
+        payload: err.message,
       })
-    }
-  }
+    })
+    .finally(() => dispatch(createActionStop()))
 
-export const createActionLogout = () => {
-  return {
-    type: LOGOUT,
-  }
 }
+
+
+export const createActionLogin = (accountDetails) => async (dispatch, getState) => {
+  dispatch(createActionStart())
+  api
+    .login(accountDetails, 'authenticate')
+    .then((resp) => {
+      dispatch({
+        type: LOGIN,
+        payload: resp.data,
+      })
+    })
+    .catch((err) => {
+      dispatch({
+        type: ERROR,
+        payload: err.message,
+      })
+    })
+    .finally(() => dispatch(createActionStop()))
+
+}
+
+export const createActionLogout = () => ({
+  type: LOGOUT,     
+})
+
+const createActionStart = () => ({
+  type: START,
+})
+
+const createActionStop = () => ({
+  type: STOP,
+})
 
 export const initialState = {
   value: null,
+  loading: false,
   error: null,
 }
 
@@ -67,13 +82,25 @@ export const reducer = (state = initialState, action) => {
         ...state,
         value: action.payload,
       }
+    case LOGOUT:
+      return initialState
     case ERROR:
       return {
         ...state,
         error: action.payload,
       }
-    case LOGOUT:
-      return initialState
+    case START:
+      return {
+        ...state,
+        loading: true,
+        value: initialState.value,
+        error: initialState.error
+      }
+    case STOP:
+      return {
+        ...state,
+        loading: initialState.loading
+      }
     default:
       return state
   }
