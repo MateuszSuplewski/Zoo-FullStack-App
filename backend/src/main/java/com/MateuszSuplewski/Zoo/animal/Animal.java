@@ -25,7 +25,7 @@ public class Animal {
     private String description;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "species_id", referencedColumnName = "id")
     private Species species;
 }

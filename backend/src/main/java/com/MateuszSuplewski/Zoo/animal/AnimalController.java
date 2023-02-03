@@ -20,39 +20,48 @@ public class AnimalController {
     @Autowired
     private SpeciesRepository speciesRepository;
 
-    @GetMapping // działą git
+    @GetMapping
     public ResponseEntity<List<Animal>> getAllAnimals(){
-        List<Animal> animals = animalRepository.findAll();
-
-        return ResponseEntity.ok(animals);
+        return ResponseEntity.ok(animalRepository.findAll());
     }
 
-    @PostMapping // zrobić "back reference"
-    public ResponseEntity<String> saveAnimal(@RequestBody Animal animal){
+    @GetMapping("{id}")
+    public ResponseEntity<Optional <Animal>> getAnimal(@PathVariable Integer id){
+        Optional<Animal> animal = animalRepository.findById(id);
+        return ResponseEntity.ok(animal);
+    }
+
+    @PostMapping
+    public ResponseEntity<Animal> saveAnimal(@RequestBody Animal animal){
 
         Species animalSpecies = animal.getSpecies();
         String speciesName = animalSpecies.getName();
 
-        var species = speciesRepository.findByName(speciesName);
+        var foundSpecies = speciesRepository.findByName(speciesName);
 
-        if(species != null) {
-            animal.setSpecies(species);
+
+        if(foundSpecies != null) {
+            List<Animal> Animals = foundSpecies.getAnimal();
+            Animals.add(animal);
+
+            foundSpecies.setAnimal(Animals);
+            animal.setSpecies(foundSpecies);
         }
 
         animalRepository.save(animal);
-        return ResponseEntity.ok("Animal added");
+        return ResponseEntity.ok(animal);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteAnimal(@PathVariable Integer id){
+    public ResponseEntity<Integer> deleteAnimal(@PathVariable Integer id){
         animalRepository.deleteById(id);
-        return ResponseEntity.ok("Animal deleted");
+        return ResponseEntity.ok(id);
     }
 
-    @PutMapping("{id}") // działa super!
-    public ResponseEntity<String> updateAnimal(@PathVariable Integer id, @RequestBody Animal animal){
+    @PutMapping("{id}")
+    public ResponseEntity<Animal> updateAnimal(@PathVariable Integer id, @RequestBody Animal animal){
 
-        Animal newAnimal = Animal.builder()
+        Animal updatedAnimal = Animal.builder()
                 .id(id)
                 .name(animal.getName())
                 .age(animal.getAge())
@@ -61,8 +70,8 @@ public class AnimalController {
                 .species(animal.getSpecies())
                 .build();
 
-        animalRepository.save(newAnimal);
+        animalRepository.save(updatedAnimal);
 
-        return ResponseEntity.ok("Animal updated");
+        return ResponseEntity.ok(updatedAnimal);
     }
 }

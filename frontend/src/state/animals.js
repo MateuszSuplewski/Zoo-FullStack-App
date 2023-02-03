@@ -138,14 +138,14 @@ export const reducer = (state = initialState, action) => {
       return {
         ...state,
         value: state.value.map((animal) =>
-          animal.animalId === action.payload.animalId ? action.payload : animal
+          animal.id === action.payload.id ? action.payload : animal
         ),
       }
     case DELETE:
       return {
         ...state,
         value: state.value.filter(
-          (animal) => animal.animalId !== action.payload.animalId
+          (animal) => animal.id !== action.payload
         ),
       }
     case ERROR:
