@@ -1,10 +1,10 @@
 package com.MateuszSuplewski.Zoo.config;
 
 
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,19 +27,24 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**","/", "/login**","/callback/", "/webjars/**", "/error**", "/home")
+                .requestMatchers("/api/v1/auth/**")
                 .permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/animals","/api/v1/animals/**")
+                .permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/animals")
+                .hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/animals/**")
+                .hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/animals/**")
+                .hasAuthority("ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                //new Session for each request !
                 .and()
                 .authenticationProvider(authenticationProdiver)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-//                .formLogin()
-//                .defaultSuccessUrl("/home", true);
 
         return http.build();
     }
