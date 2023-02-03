@@ -1,26 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import Navbar from '../components/Navbar'
 import AnimalCard from '../components/AnimalCard'
-import { Grid } from '@mui/material'
+import {Grid} from '@mui/material'
 import Pagination from '../components/Pagination'
 import img from '../assets/img/bg_nature_2.jpg'
-import { createActionGet } from '../state/animals'
-import { useDispatch, useSelector } from 'react-redux'
+import {createActionGetAll} from '../state/animals'
+import {useDispatch, useSelector} from 'react-redux'
+import AddAnimal from '../components/AddAnimal'
+import FullPageLoader from '../components/FullPageLoader'
+import FullPageMessage from '../components/FullPageMessage'
+import useRole from '../hooks/useRole'
 
 const Animals = () => {
   const storeDispatch = useDispatch()
-  const authState = useSelector((state) => state.animals)
-  const { value, error } = authState
+  const animalsState = useSelector((state) => state.animals)
+  const {value, loading, error} = animalsState
+  const [userRole] = useRole('http://localhost:8080/api/v1/auth/role')
 
   useEffect(() => {
-    storeDispatch(createActionGet())
+    storeDispatch(createActionGetAll())
   }, [])
 
   return (
     <>
       <Navbar />
-      {error ? (
-        <div>{error}</div>
+      {userRole === 'ADMIN' && <AddAnimal />}
+      {loading ? (
+        <FullPageLoader />
+      ) : error ? (
+        <FullPageMessage>{error}</FullPageMessage>
       ) : (
         <Grid
           container
@@ -31,7 +39,7 @@ const Animals = () => {
           columns={12}
           sx={{
             justifyContent: 'center',
-            backgroundImage: `url(${img})`,
+            backgroundImage: img ? `url(${img})` : `url(https://images.pexels.com/photos/247502/pexels-photo-247502.jpeg?cs=srgb&dl=pexels-pixabay-247502.jpg&fm=jpg)`,
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
@@ -39,9 +47,9 @@ const Animals = () => {
         >
           <Pagination limit={12} path={'/animals/page'}>
             {value &&
-              value.map(({ name, id, species }) => (
-                <Grid item sm={12} md={6} lg={4} key={id}>
-                  <AnimalCard id={id} name={name} species={species} />
+              value.map((animal, index) => (
+                <Grid item sm={12} md={6} lg={4} key={index}>
+                  <AnimalCard animal={animal} />
                 </Grid>
               ))}
           </Pagination>

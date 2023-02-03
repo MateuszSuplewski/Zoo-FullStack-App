@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import {
   Card,
   CardActions,
@@ -6,11 +7,21 @@ import {
   Button,
   Typography,
   Box,
-  Grid,
 } from '@mui/material'
 import { Link } from 'react-router-dom'
+import { createActionDelete } from '../state/animals'
+import UpdateAnimal from './UpdateAnimal'
+import useRole from '../hooks/useRole'
 
-const AnimalCard = ({ id, name, species, imgSrc }) => {
+const AnimalCard = ({ animal }) => {
+  const storeDispatch = useDispatch()
+  const {id, name, species, imgSrc} = animal
+  const [userRole] = useRole('http://localhost:8080/api/v1/auth/role')
+
+  const deleteAnimal = () => {
+    storeDispatch(createActionDelete(id))
+  }
+
   return (
     <Card id={id} sx={{ minWidth: 320, maxWidth: 420, margin: '0 auto' }}>
       <CardMedia
@@ -65,6 +76,9 @@ const AnimalCard = ({ id, name, species, imgSrc }) => {
         >
           Read more
         </Button>
+        {
+              userRole === 'ADMIN' && (<><Button variant='contained' size='large' color='error' onClick={deleteAnimal}>DELETE</Button> <UpdateAnimal animal={animal}/></>)
+         }
       </CardActions>
     </Card>
   )
