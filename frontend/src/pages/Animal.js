@@ -6,7 +6,7 @@ import {useParams} from 'react-router-dom'
 import {useDispatch, useSelector} from 'react-redux'
 import {createActionGet} from '../state/animals'
 import {Box, Grid, Typography, Button} from '@mui/material'
-// import { createActionAdd } from '../state/cart'
+import { createActionAdd } from '../state/cart'
 import useRole from '../hooks/useRole'
 
 const Animal = () => {
@@ -127,7 +127,7 @@ const Animal = () => {
                     sx={{maxWidth: 300, m: '0 auto', mt: 3}}
                     fullWidth
                     size="large"
-                    // onClick={() => storeDispatch(createActionAdd({...currentAnimal, money: 0}))}
+                    onClick={() => storeDispatch(createActionAdd({...currentAnimal, money: 0}))}
                     disabled={ userRole !== "ADMIN" && userRole !== "USER" }
                   >
                     SUPPORT ANIMAL

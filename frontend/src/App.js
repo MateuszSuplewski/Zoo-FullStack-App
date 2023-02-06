@@ -6,6 +6,8 @@ import Register from './pages/Register'
 import Logout from './pages/Logout'
 import Animals from './pages/Animals'
 import Animal from './pages/Animal'
+import Cart from './pages/Cart'
+import Orders from './pages/Orders'
 
 const App = () => {
   return (
@@ -16,6 +18,8 @@ const App = () => {
       <Route path={'/logout'} element={<Logout />} />
       <Route path={'/animals/page/:page'} element={<Animals />} />
       <Route path={'/animal/:animalId'} element={<Animal />} />
+      <Route path={'/cart'} element={<Cart />} />
+      <Route path={'/orders'} element={<Orders />} />
     </Routes>
   )
 }

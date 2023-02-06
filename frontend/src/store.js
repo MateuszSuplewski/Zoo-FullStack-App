@@ -3,6 +3,7 @@ import { createStore, applyMiddleware, combineReducers } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import authReducer from './state/auth'
 import animalsReducer from './state/animals'
+import cartReducer from './state/cart'
 import axios from 'axios'
 
 const LOCAL_STORAGE_KEY = 'ZooAuthorization'
@@ -10,7 +11,8 @@ const preloadedState = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || un
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  animals: animalsReducer
+  animals: animalsReducer,
+  cart: cartReducer
 })
 
 const store = createStore(
@@ -23,11 +25,11 @@ const store = createStore(
 
 store.subscribe(() => {
   const state = store.getState()
-  const { auth } = state
+  const { auth, cart } = state
   const { value } = auth
   if(value){
     const { token } = value
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ token }))
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ token, cart })) // change to auth so there will be no conflicts between redux & storage
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
     
   }
@@ -35,9 +37,6 @@ store.subscribe(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(null))
     delete axios.defaults.headers.common['Authorization']
   }
-  // const { cart } = state
-  //localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ cart }))
-
 })
 
 export default store

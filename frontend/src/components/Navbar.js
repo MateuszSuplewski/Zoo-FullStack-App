@@ -5,6 +5,7 @@ import PetsIcon from '@mui/icons-material/Pets'
 import { Link } from 'react-router-dom'
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag'
 import AuthLinks from './AuthLinks'
+import { useSelector } from 'react-redux'
 
 const pages = ['Home', 'Animals']
 const urls = ['/', '/animals/page/1']
@@ -13,6 +14,8 @@ const userLinks = ['Orders']
 const Navbar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null)
   const [anchorElUser, setAnchorElUser] = React.useState(null)
+
+  const cartState = useSelector((state) => state.cart)
 
   const handleOpenNavMenu = (e) => {
     setAnchorElNav(e.currentTarget)
@@ -125,9 +128,9 @@ const Navbar = () => {
             ))}
           </Box>
           <Box>
-            <IconButton size="large" color="inherit">
-              <Badge badgeContent={17} color="error" sx={{ mr: 1 }}>
-                <ShoppingBagIcon />
+          <IconButton component={Link} to={'/cart'} size="large" color="inherit">
+              <Badge badgeContent={cartState.length} color="error" sx={{ mr: 1, textDecoration: 'none' }}>
+                <ShoppingBagIcon/>
               </Badge>
             </IconButton>
           </Box>

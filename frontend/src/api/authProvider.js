@@ -11,7 +11,7 @@ class AuthAPI {
 
     //fetchRole = (token, path) => axios.post(this.API_URL + '/' + path, token)
 
-    //fetchId = (token, path) => axios.post(this.API_URL + '/' + path, token)
+    fetchId = (token, path) => axios.post(this.API_URL + '/' + path, token)
 }
 
 export default AuthAPI
