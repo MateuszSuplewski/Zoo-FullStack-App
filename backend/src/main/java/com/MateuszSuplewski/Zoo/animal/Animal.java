@@ -1,12 +1,12 @@
 package com.MateuszSuplewski.Zoo.animal;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.MateuszSuplewski.Zoo.orderedAnimal.OrderedAnimal;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -28,4 +28,8 @@ public class Animal {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "species_id", referencedColumnName = "id")
     private Species species;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL)
+    private List<OrderedAnimal> orderedAnimals;
 }

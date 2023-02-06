@@ -26,7 +26,7 @@ public class AuthenticationService {
                 .lastName(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER) // zawsze dawaj usera!
+                .role(Role.USER)
                 .build();
 
         repository.save(user);
@@ -73,6 +73,4 @@ public class AuthenticationService {
         var userRole = user.getRole();
         return userRole;
     }
-
-
 }

@@ -1,5 +1,7 @@
 package com.MateuszSuplewski.Zoo.user;
 
+import com.MateuszSuplewski.Zoo.orderDetails.OrderDetails;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,11 +27,22 @@ public class User implements UserDetails {
     private Integer id;
     private String firstName;
     private String lastName;
+
+    @JsonIgnore
     private String email;
+
+    @JsonIgnore
     private String password;
+
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<OrderDetails> orderDetails;
+
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
