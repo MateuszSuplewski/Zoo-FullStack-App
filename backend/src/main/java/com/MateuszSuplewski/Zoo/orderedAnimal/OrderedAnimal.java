@@ -2,7 +2,6 @@ package com.MateuszSuplewski.Zoo.orderedAnimal;
 
 import com.MateuszSuplewski.Zoo.animal.Animal;
 import com.MateuszSuplewski.Zoo.orderDetails.OrderDetails;
-import com.MateuszSuplewski.Zoo.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,6 +20,7 @@ public class OrderedAnimal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private Double money;
 
     @ManyToOne

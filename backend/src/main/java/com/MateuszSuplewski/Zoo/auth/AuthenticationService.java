@@ -52,7 +52,7 @@ public class AuthenticationService {
 
    public User findUserFromToken(String token){
        String userEmail = jwtService.extractUsername(token);
-       var user = repository.findByEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("Can't'find user connected with the token"));
+       var user = repository.findByEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("Can't find user connected with the token"));
         return user;
     }
 
