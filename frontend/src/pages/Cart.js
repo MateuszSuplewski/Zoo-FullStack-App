@@ -3,16 +3,15 @@ import Navbar from '../components/Navbar'
 import {useDispatch, useSelector} from 'react-redux'
 import { Avatar, Box, Button, Grid, Paper, TextField, Typography } from '@mui/material'
 import { createActionRemove } from '../state/cart'
-import { createActionSetDonation } from '../state/cart'
-import OrdersAPI from '../api/ordersProvider'
+import { createActionSetDonation, createActionRemoveAll } from '../state/cart'
 import AuthAPI from '../api/authProvider'
+import { createActionAdd } from '../state/orders'
 
-const Cart = () => { // zaimplementowac dodanie zamowienia!
+const Cart = () => {
   const cartsState = useSelector((state) => state.cart)
   const storeDispatch = useDispatch()
-  const api = new OrdersAPI('http://localhost:8080/api/v1/orders')
   const authApi = new AuthAPI('http://localhost:8080/api/v1/auth')
-  const authStore = useSelector((state) => state.auth)
+  const authState = useSelector((state) => state.auth)
 
   const [address, setAddress] = useState('')
   const [user, setUser] = useState('')
@@ -34,9 +33,13 @@ const Cart = () => { // zaimplementowac dodanie zamowienia!
     return finalPrice
   }
 
-  const handleOrder = async () => {
+  const handleOrder = () => {
     const orderedAnimals = cartsState.map(
-      animal => ({money:animal.money, animal:{id: animal.id}})
+      animal => (
+        {
+          animal: { id: animal.id }, 
+          money:animal.money
+        })
     )
 
     const order = {
@@ -47,19 +50,15 @@ const Cart = () => { // zaimplementowac dodanie zamowienia!
       orderedAnimals,
     }
 
-    console.log(order)
-
-    api.create(order)
+    storeDispatch(createActionAdd(order))
+    storeDispatch(createActionRemoveAll())
   }
 
-  useEffect(() => { 
-    if(authStore && authStore.value) abc()
-   
-  },[])
+  useEffect(() => {getUserIdByToken()}, [])
 
-  const abc = async () => {
+  const getUserIdByToken = async () => {
     authApi
-    .fetchId(authStore.value.token, 'id')
+    .fetchId(authState.value.token, 'id')
     .then((resp) => {
       setUser(resp.data)
     })
@@ -112,3 +111,6 @@ const Cart = () => { // zaimplementowac dodanie zamowienia!
 }
 
 export default Cart
+
+
+// to refactor!
