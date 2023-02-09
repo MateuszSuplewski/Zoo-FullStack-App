@@ -8,6 +8,7 @@ import Animals from './pages/Animals'
 import Animal from './pages/Animal'
 import Cart from './pages/Cart'
 import Orders from './pages/Orders'
+import ProtectedRoute from './components/ProtectedRoute'
 
 const App = () => {
   return (
@@ -18,8 +19,11 @@ const App = () => {
       <Route path={'/logout'} element={<Logout />} />
       <Route path={'/animals/page/:page'} element={<Animals />} />
       <Route path={'/animal/:animalId'} element={<Animal />} />
-      <Route path={'/cart'} element={<Cart />} />
-      <Route path={'/orders'} element={<Orders />} />
+
+      <Route element={<ProtectedRoute />}>
+        <Route path={'/cart'} element={<Cart />} exact />
+        <Route path={'/orders'} element={<Orders />} exact />
+      </Route>
     </Routes>
   )
 }
