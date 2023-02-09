@@ -1,11 +1,9 @@
 package com.MateuszSuplewski.Zoo.animal;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -36,15 +34,9 @@ public class AnimalController {
 
         Species animalSpecies = animal.getSpecies();
         String speciesName = animalSpecies.getName();
-
-        var foundSpecies = speciesRepository.findByName(speciesName);
-
+        Species foundSpecies = speciesRepository.findByName(speciesName);
 
         if(foundSpecies != null) {
-            List<Animal> Animals = foundSpecies.getAnimal();
-            Animals.add(animal);
-
-            foundSpecies.setAnimal(Animals);
             animal.setSpecies(foundSpecies);
         }
 
@@ -61,17 +53,21 @@ public class AnimalController {
     @PutMapping("{id}")
     public ResponseEntity<Animal> updateAnimal(@PathVariable Integer id, @RequestBody Animal animal){
 
+        Species animalSpecies = animal.getSpecies();
+        String speciesName = animalSpecies.getName();
+        Species foundSpecies = speciesRepository.findByName(speciesName);
+
         Animal updatedAnimal = Animal.builder()
                 .id(id)
                 .name(animal.getName())
                 .age(animal.getAge())
                 .weight(animal.getWeight())
                 .description(animal.getDescription())
-                .species(animal.getSpecies())
+                .species(foundSpecies != null ? foundSpecies : animal.getSpecies())
+                .image(animal.getImage())
                 .build();
 
         animalRepository.save(updatedAnimal);
-
         return ResponseEntity.ok(updatedAnimal);
     }
 }
