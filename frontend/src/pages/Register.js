@@ -1,39 +1,26 @@
-import React, { useState, useEffect } from 'react'
-import { Button, TextField, Box, Avatar, Typography, Link, Container, Grid, Alert } from '@mui/material'
-import LockPersonIcon from '@mui/icons-material/LockPerson'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { Button, TextField, Box, Avatar, Typography, Link, Container, Grid, Alert } from '@mui/material'
+import LockPersonIcon from '@mui/icons-material/LockPerson'
 import { createActionRegister } from '../state/auth'
+import registerFields from '../data/registerFields'
+import validateForm from '../helpers/validateForm'
+import useForm from '../hooks/useForm'
 
 const Register = () => {
-  const storeDispatch = useDispatch()
   const navigate = useNavigate()
+  const storeDispatch = useDispatch()
   const authState = useSelector((state) => state.auth)
   const { value, error } = authState
-
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
   useEffect(() => {
     if (value && value.token) setTimeout(() => navigate(-1), 5000)
   }, [value])
 
-  const clearFields = () => {
-    setFirstName('')
-    setLastName('')
-    setEmail('')
-    setPassword('')
-  }
+  const onSubmit = (data) => storeDispatch(createActionRegister({ ...data }))
 
-  const saveUser = async (e) => {
-    e.preventDefault()
-
-    storeDispatch(createActionRegister({ firstname: firstName, lastname: lastName, email, password })) 
-    // ten sam email przechodzi ... cos z tym zrobic!
-    clearFields()
-  }
+  const [handleInputChange, handleFormSubmit, state, errors] = useForm(validateForm, registerFields, onSubmit)
 
   return (
     <Container component="main" maxWidth="xs">
@@ -62,53 +49,36 @@ const Register = () => {
             Email already in use
           </Alert>
         )}
-        <Box component="form" noValidate onSubmit={saveUser} sx={{ mt: 3 }}>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={handleFormSubmit}
+          sx={{ mt: 3 }}
+        >
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                label="First Name"
-                autoFocus
-                onChange={(e) => setFirstName(e.target.value)}
-                value={firstName}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                label="Last Name"
-                onChange={(e) => setLastName(e.target.value)}
-                value={lastName}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                label="Email Address"
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                label="Password"
-                type="password"
-                onChange={(e) => setPassword(e.target.value)}
-                value={password}
-              />
-            </Grid>
+            {registerFields.map(({ name, label, type }) => (
+              <Grid item xs={12} sm={6} key={name}>
+                <TextField
+                  error={errors[label] === null}
+                  helperText={errors[label]}
+                  multiline={type === 'textarea'}
+                  id={name}
+                  type={type === 'textarea' ? 'text' : type}
+                  label={label}
+                  name={name}
+                  variant="outlined"
+                  value={state[name]}
+                  fullWidth
+                  onChange={(e) => handleInputChange(e, type)}
+                />
+              </Grid>
+            ))}
           </Grid>
           <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-            disabled={!(firstName && lastName && email && password)}
           >
             Sign Up
           </Button>

@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react'
-import { Button, TextField, Box, Avatar, Typography, Link, Container, Grid, Alert } from '@mui/material'
-import LockPersonIcon from '@mui/icons-material/LockPerson'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { Button, TextField, Box, Avatar, Typography, Link, Container, Grid, Alert } from '@mui/material'
+import LockPersonIcon from '@mui/icons-material/LockPerson'
 import { createActionLogin } from '../state/auth'
+import loginFields from '../data/loginFields'
+import validateForm from '../helpers/validateForm'
+import useForm from '../hooks/useForm'
 
 const Login = () => {
   const storeDispatch = useDispatch()
@@ -11,23 +14,13 @@ const Login = () => {
   const authState = useSelector((state) => state.auth)
   const { value, error } = authState
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
   useEffect(() => {
     if (value && value.token) setTimeout(() => navigate(-1), 5000)
   }, [value])
 
-  const clearFields = () => {
-    setEmail('')
-    setPassword('')
-  }
+  const onSubmit = (data) => storeDispatch(createActionLogin({ ...data }))
 
-  const validateUser = async (e) => {
-    e.preventDefault()
-    storeDispatch(createActionLogin({email,password}))
-    clearFields()
-  }
+  const [handleInputChange, handleFormSubmit, state, errors] = useForm(validateForm, loginFields, onSubmit)
 
   return (
     <Container component="main" maxWidth="xs">
@@ -55,31 +48,32 @@ const Login = () => {
             Invalid email or password
           </Alert>
         )}
-        <Box component="form" onSubmit={validateUser} noValidate sx={{ mt: 1 }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Email Address"
-            autoFocus
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Password"
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-          />
+        <Box
+          component="form"
+          onSubmit={handleFormSubmit}
+          noValidate
+          sx={{ mt: 1 }}
+        >
+          {loginFields.map(({ name, label, type }) => (
+            <TextField
+              error={errors[label] === null}
+              helperText={errors[label]}
+              key={name}
+              id={name}
+              type={type}
+              label={label}
+              margin="normal"
+              fullWidth
+              name={name}
+              value={state[name]}
+              onChange={(e) => handleInputChange(e, type)}
+            />
+          ))}
           <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-            disabled={!(email && password)}
           >
             Sign In
           </Button>

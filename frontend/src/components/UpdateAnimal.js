@@ -1,93 +1,79 @@
-import * as React from 'react';
-import {Button, Modal, Stack, TextField} from '@mui/material';
-import { createActionUpdate } from '../state/animals';
-import { useDispatch } from 'react-redux';
+import React, { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { Button, Modal, Stack, TextField } from '@mui/material'
+import { createActionUpdate } from '../state/animals'
+import validateForm from '../helpers/validateForm'
+import animalFields from '../data/animalFields'
+import useForm from '../hooks/useForm'
 
-const UpdateAnimal = ({animal}) => {
-    const {id, name, age, weight, description, species, imgSrc} = animal
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+const UpdateAnimal = ({ animal }) => {
   const storeDispatch = useDispatch()
+  const [open, setOpen] = React.useState(false)
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
 
-  const initialState = {
-    name: name,
-    age: age,
-    weight: weight,
-    description: description
-  }
-
-
-  const fields = ['Name','Age','Weight']
-  const fieldTypes = ['text','number','number']
-
-  const [values, setValues] = React.useState(initialState)
-
-  const handleInputChange = (e,fieldType) => {
-    const { name, value } = e.target
-    setValues((prevValues) => ({
-      ...prevValues,
-      [name]: fieldType === 'number' ? Number(value) : value
-    }))
-  }
-
-  const handleFormSubmit = (e) => {
-    const {name,age,weight,description} = values
-    const preparedAnimal = {
-        id,
-        name,
-        age,
-        weight,
-        description,
-        species
+  const onSubmit = (state) => {
+    const animalData = {
+      ...state,
+      species: {
+        name: state.species
+      }
     }
 
-    e.preventDefault()
-    storeDispatch(createActionUpdate(id, preparedAnimal))
+    storeDispatch(createActionUpdate(animalData.id, animalData))
     handleClose()
   }
 
+  const [handleInputChange, handleFormSubmit, state, errors, handleSetState] = useForm(validateForm, animalFields, onSubmit)
+
+  useEffect(() => {handleSetState({ ...animal, species: animal.species.name })}, [])
+
   return (
     <div>
-      <Button fullWidth size='large' variant='contained' onClick={handleOpen}>UPDATE</Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-      >
+      <Button fullWidth size="large" variant="contained" onClick={handleOpen}>
+        UPDATE
+      </Button>
+      <Modal open={open} onClose={handleClose}>
         <form
-        style={{margin: "5rem auto", backgroundColor: 'white',maxWidth: '420px', padding: '1rem'}}
-        onSubmit={handleFormSubmit}
-      >
-        <Stack spacing={2}>
-            {
-                fields.map((fieldName, index) => (
-                    <TextField key={index} required type={fieldTypes[index]} label={fieldName} name={fieldName.toLowerCase()} variant="outlined" value={values[fieldName.toLowerCase()]}
-                    onChange={(e) => handleInputChange(e,fieldTypes[index])}/>
-                ))
-            }
-              <TextField
-                 required
-                 multiline
-                 rows={2}
-                 name={'description'}
-                 label={'Description'}
-                value={values.description}
-                onChange={(e) => handleInputChange(e,'text')}
-              />
-        </Stack>
-        <Button
-          variant={'contained'}
-          sx={{ mt: 0.75 }}
-          fullWidth
-          type={'submit'}
+          style={{
+            margin: '5rem auto',
+            backgroundColor: 'white',
+            maxWidth: '420px',
+            padding: '1rem',
+          }}
+          onSubmit={handleFormSubmit}
+          noValidate
         >
-          UPDATE ANIMAL
-        </Button>
-      </form>
+          <Stack spacing={2}>
+            {animalFields.map(({ name, label, type }) => (
+              <TextField
+                error={errors[label] === null}
+                helperText={errors[label]}
+                multiline={type === 'textarea'}
+                key={name}
+                id={name}
+                type={type === 'textarea' ? 'text' : type}
+                label={label}
+                name={name}
+                variant="outlined"
+                value={state[name]}
+                onChange={(e) => handleInputChange(e, type)}
+                rows={type === 'textarea' ? 5 : 1}
+              />
+            ))}
+          </Stack>
+          <Button
+            variant={'contained'}
+            sx={{ mt: 0.75 }}
+            fullWidth
+            type={'submit'}
+          >
+            UPDATE ANIMAL
+          </Button>
+        </form>
       </Modal>
     </div>
   )
 }
 
 export default UpdateAnimal
-
