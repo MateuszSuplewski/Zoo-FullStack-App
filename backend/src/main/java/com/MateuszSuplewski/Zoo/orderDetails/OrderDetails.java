@@ -9,7 +9,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -18,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(name = "order_details")
+@EntityListeners(AuditingEntityListener.class)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class OrderDetails {
 
@@ -28,7 +33,11 @@ public class OrderDetails {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
     private String address;
+
+    @CreatedDate
+    private Instant orderedAt;
 
     @OneToMany(mappedBy = "orderDetails", cascade = CascadeType.ALL)
     private List<OrderedAnimal> orderedAnimals;

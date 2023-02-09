@@ -5,7 +5,6 @@ import com.MateuszSuplewski.Zoo.orderedAnimal.OrderedAnimal;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.List;
 
 @Entity
@@ -21,9 +20,9 @@ public class Animal {
     private Integer id;
     private String name;
     private Integer age;
-    private Integer weight;
+    private Double weight;
     private String description;
-
+    private String image;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "species_id", referencedColumnName = "id")
